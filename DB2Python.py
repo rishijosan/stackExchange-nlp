@@ -67,13 +67,14 @@ def dumpTags2Posts():
 
 with open('/media/sf_G_DRIVE/nlp/Project/dataset/superuser/posts.pk', 'rb') as inp:
     res = pickle.load(inp)
+    
    
 with open('/media/sf_G_DRIVE/nlp/Project/dataset/superuser/idToPost.pk', 'rb') as inp:
     idToPost = pickle.load(inp)
    
 with open('/media/sf_G_DRIVE/nlp/Project/dataset/superuser/tags.pk', 'rb') as inp:
     tags = pickle.load(inp)
-   
+  
 with open('/media/sf_G_DRIVE/nlp/Project/dataset/superuser/tags2Posts.pk', 'rb') as inp:
     tags2Posts = pickle.load(inp)
 
