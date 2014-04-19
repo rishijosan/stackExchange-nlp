@@ -17,7 +17,7 @@ from  nltk.probability import FreqDist
 from nltk.corpus import stopwords
 
 
-useSantized = False
+useSantized = True
 
 
 #transformer = TfidfTransformer()
@@ -45,16 +45,17 @@ else:
     with open('/media/sf_G_DRIVE/nlp/Project/dataset/superuser/idToPost.pk', 'rb') as inp:
         idToPost = pickle.load(inp)
     
-with open('/media/sf_G_DRIVE/nlp/Project/dataset/superuser/posList10k.pk', 'rb') as inp:
+with open('/media/sf_G_DRIVE/nlp/Project/dataset/superuser/posListTop100.pk', 'rb') as inp:
     posList = pickle.load(inp)
     
-with open('/media/sf_G_DRIVE/nlp/Project/dataset/superuser/negList10k.pk', 'rb') as inp:
+with open('/media/sf_G_DRIVE/nlp/Project/dataset/superuser/negListTop100.pk', 'rb') as inp:
     negList = pickle.load(inp)
     
-with open('/media/sf_G_DRIVE/nlp/Project/dataset/superuser/testSet.pk', 'rb') as inp:
+with open('/media/sf_G_DRIVE/nlp/Project/dataset/superuser/testSetTop100.pk', 'rb') as inp:
     testSet = pickle.load(inp)
  
- 
+
+key = 20
   
 #Create Vector of Posts
 trainList1 = list()
@@ -62,7 +63,7 @@ testList1 = list()
 #Create Vector of Labels
 labels1 = list()
 
-for item in posList[0][0:1000]:
+for item in posList[key]:
     
     if useSantized:
         trainList1.append(" ".join(idToPost[item][1]))
@@ -71,7 +72,7 @@ for item in posList[0][0:1000]:
         
     labels1.append(1)
     
-for item in negList[0][0:1000]:
+for item in negList[key]:
     
     if useSantized:
         trainList1.append(" ".join(idToPost[item][1]))
@@ -80,7 +81,7 @@ for item in negList[0][0:1000]:
         
     labels1.append(0)
     
-for item in testSet[0:1000]:
+for item in testSet[key]:
     
     if useSantized:
         testList1.append(" ".join(idToPost[item][1]))
@@ -154,12 +155,18 @@ def wordFrequencySVM(trainList, labels, testList):
     return results
     
     
-#res = wordFrequencySVM(trainList1, labels1, testList1)
+res = wordFrequencySVM(trainList1, labels1, testList1)
+acc = float(sum(res))/len(res)
 
-trainCountVector = countVec.fit_transform(trainList1)
-docClassifier = svm.LinearSVC()
-docClassifier.fit(trainCountVector, labels1) 
 
-testCountVector = countVec.transform(testList1)
-results = docClassifier.predict(testCountVector)
+
+
+#===============================================================================
+# trainCountVector = countVec.fit_transform(trainList1)
+# docClassifier = svm.LinearSVC()
+# docClassifier.fit(trainCountVector, labels1) 
+# 
+# testCountVector = countVec.transform(testList1)
+# results = docClassifier.predict(testCountVector)
+#===============================================================================
 

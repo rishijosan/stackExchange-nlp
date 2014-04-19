@@ -45,45 +45,61 @@ for i in range(numTags):
 # For each top tag, collect 60 positive and 1500 negative posts(Originally)
 posList = list() 
 negList = list()
+
     
 # Create Pos List
-for i in range(1):
-    posList.append(random.sample(topList[i], 10000))
+for i in range(numTags):
+    numPosts = 4*len(topList[i])/5
+    if numPosts > 1000:
+        numPosts = 1000
+    posList.append(random.sample(topList[i], numPosts))
+   
     
     
 #Create TestSet
 testList = list()
-for i in range(1):
-    testList.append(random.sample(topList[i], 5000))
+for i in range(numTags):
+    posSet = set(posList[i])
+    totSet = set(topList[i])
+    testSet = totSet - posSet
+    numTest = len(testSet)
+    if numTest > 1000:
+        numTest = 1000
+    testList.append(random.sample(testSet, numTest))
     
-finTestSet = list(set(testList[0]) - set(posList[0]))
+#finTestSet = list(set(testList[0]) - set(posList[0]))
     
     
 #Create list of sets for posts for top tags 
+
 tagSetList = list()  
 for i in range(numTags):
     tagSetList.append(set(tags2Posts[tagsDesc[i][0]]))
     
 postSet = set(idToPost.keys())
 
-# Create NegList 
-for i in range(1):
 
-    negPosts = random.sample(postSet-tagSetList[i], 10000) #All posts - posts corresponding to tag in question
+
+
+# Create NegList 
+for i in range(numTags):
+
+    negPosts = random.sample(postSet-tagSetList[i], 1000) #All posts - posts corresponding to tag in question
     negList.append(negPosts)
     #print 'Tag' + str(i) + 'complete!'
     
     
 #Originally PosList had 60 words and neglist had 15000 words
 
-with open('/media/sf_G_DRIVE/nlp/Project/dataset/superuser/posList10k.pk', 'wb') as output:
+with open('/media/sf_G_DRIVE/nlp/Project/dataset/superuser/posListTop100.pk', 'wb') as output:
     pickle.dump(posList, output, protocol=0)
     
-with open('/media/sf_G_DRIVE/nlp/Project/dataset/superuser/negList10k.pk', 'wb') as output:
+with open('/media/sf_G_DRIVE/nlp/Project/dataset/superuser/negListTop100.pk', 'wb') as output:
     pickle.dump(negList, output, protocol=0)
     
-with open('/media/sf_G_DRIVE/nlp/Project/dataset/superuser/testSet.pk', 'wb') as output:
-    pickle.dump(finTestSet, output, protocol=0)
+with open('/media/sf_G_DRIVE/nlp/Project/dataset/superuser/testSetTop100.pk', 'wb') as output:
+    pickle.dump(testList, output, protocol=0)
+
 
     
 #Find min no. of posts    
