@@ -59,8 +59,8 @@ labelsNP = np.array(labels)
 
 #Create numPY matrix with features
 
-tfifdVector = countVec.fit_transform(subList)
-#tfifdVector = vectorizer.fit_transform(subList)
+#tfifdVector = countVec.fit_transform(subList)
+tfifdVector = vectorizer.fit_transform(subList)
 
 docClassifier = svm.LinearSVC()
 docClassifier.fit(tfifdVector, labelsNP) 
@@ -77,8 +77,10 @@ for id in tags2Posts[tagsDesc[0][0]]:
 testListNP = np.array(testList)
 
 
-tfifdVectorTest = countVec.transform(testList[1000:2000])
-#tfifdVectorTest = vectorizer.transform(testList[1000:2000])
+#tfifdVectorTest = countVec.transform(testList[1000:2000])
+tfifdVectorTest = vectorizer.transform(testList[1000:2000])
+
+#tfifdVectorTest = vectorizer.transform(subList)
 print 'Vectorized!'
 results = np.array(docClassifier.predict(tfifdVectorTest)).tolist()
 

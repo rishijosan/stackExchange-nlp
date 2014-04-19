@@ -56,7 +56,7 @@ testList = list()
 for i in range(1):
     testList.append(random.sample(topList[i], 5000))
     
-finTestSet = set(testList[0]) - set(posList[0])
+finTestSet = list(set(testList[0]) - set(posList[0]))
     
     
 #Create list of sets for posts for top tags 
