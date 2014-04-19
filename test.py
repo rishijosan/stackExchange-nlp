@@ -35,6 +35,10 @@ with open('/media/sf_G_DRIVE/nlp/Project/dataset/superuser/tagsDesc.pk', 'rb') a
 #===============================================================================
 
 
+testList = []
+
+testList.append(1,2,3,4,5)
+
 newSet = set()
 
 for x in range(10):

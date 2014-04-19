@@ -3,24 +3,19 @@ Created on Apr 17, 2014
 
 @author: Rishi Josan
 '''
-
-from sklearn.feature_extraction.text import TfidfTransformer
+import nltk
+from  nltk.probability import FreqDist
+from sklearn import svm
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.feature_extraction.text import CountVectorizer
 import cPickle as pickle
 import numpy as np
-import nltk
-from nltk.corpus import PlaintextCorpusReader
-from sklearn import svm
 from collections import OrderedDict
-from  nltk.probability import FreqDist
-from nltk.corpus import stopwords
 
-
+# Use sanitized text
 useSantized = True
 
 
-#transformer = TfidfTransformer()
 vectorizer = TfidfVectorizer()
 #countVec = CountVectorizer(stop_words='english')
 countVec = CountVectorizer()
@@ -55,38 +50,52 @@ with open('/media/sf_G_DRIVE/nlp/Project/dataset/superuser/testSetTop100.pk', 'r
     testSet = pickle.load(inp)
  
 
-key = 20
-  
-#Create Vector of Posts
-trainList1 = list()
-testList1 = list()
-#Create Vector of Labels
-labels1 = list()
+trainVect = list()
+testVect = list()
+labelVect = list()
 
-for item in posList[key]:
+numtags = 10
+  
+for key in range(numtags):
     
-    if useSantized:
-        trainList1.append(" ".join(idToPost[item][1]))
-    else:
-        trainList1.append(idToPost[item][1])
+    #Create Vectors 
+    trainList1 = list()
+    testList1 = list()
+    labels1 = list()
+    
+    for item in posList[key]:
         
-    labels1.append(1)
-    
-for item in negList[key]:
-    
-    if useSantized:
-        trainList1.append(" ".join(idToPost[item][1]))
-    else:
-        trainList1.append(idToPost[item][1])
+        if useSantized:
+            trainList1.append(" ".join(idToPost[item][1]))
+        else:
+            trainList1.append(idToPost[item][1])
+            
+        labels1.append(1)
         
-    labels1.append(0)
+    for item in negList[key]:
+        
+        if useSantized:
+            trainList1.append(" ".join(idToPost[item][1]))
+        else:
+            trainList1.append(idToPost[item][1])
+            
+        labels1.append(0)
+        
+    for item in testSet[key]:
+        
+        if useSantized:
+            testList1.append(" ".join(idToPost[item][1]))
+        else:
+            testList1.append(idToPost[item][1])
+            
+    trainVect.append(trainList1)
+    testVect.append(testList1)
+    labelVect.append(labels1)
+
+
+print "Posts done!"
     
-for item in testSet[key]:
     
-    if useSantized:
-        testList1.append(" ".join(idToPost[item][1]))
-    else:
-        testList1.append(idToPost[item][1])
     
     
 def countVectorizerSVM(trainList, labels, testList):
@@ -114,9 +123,11 @@ def wordFrequencySVM(trainList, labels, testList):
     noFeat = len(trainFreq)
     trainKeys = trainFreq.keys()
     
-    ordFeat = OrderedDict()
-    for key in trainFreq.keys():
-        ordFeat.update( {key: trainFreq.freq(key)} )
+    #===========================================================================
+    # ordFeat = OrderedDict()
+    # for key in trainFreq.keys():
+    #    ordFeat.update( {key: trainFreq.freq(key)} )
+    #===========================================================================
         
         
     def featureList(corpus):
@@ -152,11 +163,26 @@ def wordFrequencySVM(trainList, labels, testList):
     testFeatArr = np.array(testFeatList)
     
     results = docClassifier.predict(testFeatArr)
-    return results
+    return results, trainKeys, docClassifier
     
     
-res = wordFrequencySVM(trainList1, labels1, testList1)
-acc = float(sum(res))/len(res)
+    
+    
+results = list()
+    
+for i in range(numtags):
+    resList = list()
+    res, keys, classifier = wordFrequencySVM(trainVect[i], labelVect[i], testVect[i])
+    acc = float(sum(res))/len(res)
+    resList.append(acc)
+    resList.append(res)
+    resList.append(keys)
+    resList.append(classifier)
+    results.append(resList)
+    print str(i) + " done!"
+    
+with open('/media/sf_G_DRIVE/nlp/Project/dataset/superuser/classifiers10', 'wb') as output:
+    pickle.dump(results, output, protocol=0)
 
 
 
