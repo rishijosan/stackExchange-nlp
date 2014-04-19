@@ -22,7 +22,7 @@ countVec = CountVectorizer()
 
 
 
-    
+######################################### Load data files #################################################3   
 with open('/media/sf_G_DRIVE/nlp/Project/dataset/superuser/idToPost.pk', 'rb') as inp:
     idToPost = pickle.load(inp)
 
@@ -46,58 +46,80 @@ with open('/media/sf_G_DRIVE/nlp/Project/dataset/superuser/posListTop100.pk', 'r
 with open('/media/sf_G_DRIVE/nlp/Project/dataset/superuser/negListTop100.pk', 'rb') as inp:
     negList = pickle.load(inp)
     
-with open('/media/sf_G_DRIVE/nlp/Project/dataset/superuser/testSetTop100.pk', 'rb') as inp:
-    testSet = pickle.load(inp)
- 
+with open('/media/sf_G_DRIVE/nlp/Project/dataset/superuser/posTestTop100.pk', 'rb') as inp:
+    posTestSet = pickle.load(inp)
+    
+with open('/media/sf_G_DRIVE/nlp/Project/dataset/superuser/negTestTop100.pk', 'rb') as inp:
+    negTestSet = pickle.load(inp)
+################################ End of Load #########################################################
 
 trainVect = list()
-testVect = list()
+posTestVect = list()
 labelVect = list()
+negTestVect = list()
 
-numtags = 10
+numtags = 100
+
+
+# Create Vectors of posts from ids
+def prepPostLists():
   
-for key in range(numtags):
-    
-    #Create Vectors 
-    trainList1 = list()
-    testList1 = list()
-    labels1 = list()
-    
-    for item in posList[key]:
+    for key in range(numtags):
         
-        if useSantized:
-            trainList1.append(" ".join(idToPost[item][1]))
-        else:
-            trainList1.append(idToPost[item][1])
+        #Create Vectors 
+        trainList1 = list()
+        testList1 = list()
+        labels1 = list()
+        negTestList1 = list()
+        
+        for item in posList[key]:
             
-        labels1.append(1)
-        
-    for item in negList[key]:
-        
-        if useSantized:
-            trainList1.append(" ".join(idToPost[item][1]))
-        else:
-            trainList1.append(idToPost[item][1])
+            if useSantized:
+                trainList1.append(" ".join(idToPost[item][1]))
+            else:
+                trainList1.append(idToPost[item][1])
+                
+            labels1.append(1)
             
-        labels1.append(0)
-        
-    for item in testSet[key]:
-        
-        if useSantized:
-            testList1.append(" ".join(idToPost[item][1]))
-        else:
-            testList1.append(idToPost[item][1])
+        for item in negList[key]:
             
-    trainVect.append(trainList1)
-    testVect.append(testList1)
-    labelVect.append(labels1)
-
-
-print "Posts done!"
+            if useSantized:
+                trainList1.append(" ".join(idToPost[item][1]))
+            else:
+                trainList1.append(idToPost[item][1])
+                
+            labels1.append(0)
+            
+        for item in posTestSet[key]:
+            
+            if useSantized:
+                testList1.append(" ".join(idToPost[item][1]))
+            else:
+                testList1.append(idToPost[item][1])
+                
+                
+                
+        for item in negTestSet[key]:
+            
+            if useSantized:
+                negTestList1.append(" ".join(idToPost[item][1]))
+            else:
+                negTestList1.append(idToPost[item][1])
+                
+            
+                
+        trainVect.append(trainList1)
+        posTestVect.append(testList1)
+        labelVect.append(labels1)
+        negTestVect.append(negTestList1)
+    
+    
+    print "Posts done!"
     
     
     
     
+# Create Feature Vector from Count Vectorizer and Fit SVM : Accuracy not good    
 def countVectorizerSVM(trainList, labels, testList):
     
     trainCountVector = countVec.fit_transform(trainList)
@@ -166,25 +188,106 @@ def wordFrequencySVM(trainList, labels, testList):
     return results, trainKeys, docClassifier
     
     
+
+# Create feature vector given vector of posts and ordered list of features
+def createFeatures(sentVect, ordList):
     
+    noFeat = len(ordList)
     
-results = list()
+    featList = []
+    for post in sentVect:
+        listItem = [0]*noFeat
+        fileFreqDist = FreqDist()
+        fileFreqDist = nltk.FreqDist(nltk.word_tokenize(post))
+            
+        i =0
+        for key in ordList:
+            if fileFreqDist.has_key(key):
+                listItem[i] = fileFreqDist.get(key)
+            i=i+1
+                
+        featList.append(listItem)
+            
+    return featList
     
-for i in range(numtags):
-    resList = list()
-    res, keys, classifier = wordFrequencySVM(trainVect[i], labelVect[i], testVect[i])
-    acc = float(sum(res))/len(res)
-    resList.append(acc)
-    resList.append(res)
-    resList.append(keys)
-    resList.append(classifier)
-    results.append(resList)
-    print str(i) + " done!"
+
+# Train classifiers for top tags, compute accuracy and save to disk  
+def createClassifiers():
     
-with open('/media/sf_G_DRIVE/nlp/Project/dataset/superuser/classifiers10', 'wb') as output:
-    pickle.dump(results, output, protocol=0)
+    prepPostLists()    
+    results = list()
+    
+    for i in range(numtags):
+        resList = list()
+        res, keys, classifier = wordFrequencySVM(trainVect[i], labelVect[i], posTestVect[i])
+        acc = float(sum(res))/len(res)
+        resList.append(acc) # Pos Test Accuracy
+        resList.append(res) # Pos Test Results
+        resList.append(keys) # To maintain order of features
+        resList.append(classifier) #Actual classifier : Use to predict
+        results.append(resList)  
+        print str(i) + " done!"
+        
+    with open('/media/sf_G_DRIVE/nlp/Project/dataset/superuser/classifiers100.pk', 'wb') as output:
+        pickle.dump(results, output, protocol=0)
 
 
+# Append accuracy and results for negative test cases
+def appendNegTests():
+    
+    prepPostLists()
+    with open('/media/sf_G_DRIVE/nlp/Project/dataset/superuser/classifiers100.pk', 'rb') as inp:
+        classifiers = pickle.load(inp)
+     
+     
+    for i in range(numtags):  
+         
+        print "Starting " + str(i)
+        feats = createFeatures(negTestVect[i], classifiers[i][2])
+        
+        classifier = classifiers[i][3]
+        res = classifier.predict(np.array(feats))
+        
+        acc = float(len(res) - sum(res))/len(res)
+        
+        classifiers[i].append(acc)
+        classifiers[i].append(res)
+        print str(i) + " Done!"
+        
+    
+    with open('/media/sf_G_DRIVE/nlp/Project/dataset/superuser/classifiersFin.pk', 'wb') as output:
+        pickle.dump(classifiers, output, protocol=0)
+        
+
+
+appendNegTests()
+
+
+#===============================================================================
+# with open('/media/sf_G_DRIVE/nlp/Project/dataset/superuser/classifiers100.pk', 'rb') as inp:
+#    classifiers = pickle.load(inp)
+# 
+# 
+# for i in range(numtags):  
+#     
+#    print "Starting " + str(i)
+#    feats = createFeatures(negTestVect[i], classifiers[i][2])
+#    
+#    classifier = classifiers[i][3]
+#    res = classifier.predict(np.array(feats))
+#    
+#    acc = float(len(res) - sum(res))/len(res)
+# 
+#    classifiers[i].append(acc)
+#    classifiers[i].append(res)
+#    print str(i) + " Done!"
+#    
+#    
+#    
+# 
+# with open('/media/sf_G_DRIVE/nlp/Project/dataset/superuser/classifiersFin.pk', 'wb') as output:
+#    pickle.dump(classifiers, output, protocol=0)
+#===============================================================================
 
 
 #===============================================================================

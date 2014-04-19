@@ -57,7 +57,7 @@ for i in range(numTags):
     
     
 #Create TestSet
-testList = list()
+posTestList = list()
 for i in range(numTags):
     posSet = set(posList[i])
     totSet = set(topList[i])
@@ -65,9 +65,9 @@ for i in range(numTags):
     numTest = len(testSet)
     if numTest > 1000:
         numTest = 1000
-    testList.append(random.sample(testSet, numTest))
+    posTestList.append(random.sample(testSet, numTest))
     
-#finTestSet = list(set(testList[0]) - set(posList[0]))
+#finTestSet = list(set(posTestList[0]) - set(posList[0]))
     
     
 #Create list of sets for posts for top tags 
@@ -88,6 +88,21 @@ for i in range(numTags):
     negList.append(negPosts)
     #print 'Tag' + str(i) + 'complete!'
     
+
+
+negTestList = []
+ 
+#Create NegTestSet
+for i in range(numTags):
+    negTrainSet = set(negList[i])
+    
+    negTestSet = random.sample(postSet-negTrainSet-tagSetList[i], 1000)
+    negTestList.append(negTestSet)
+    
+    
+
+
+
     
 #Originally PosList had 60 words and neglist had 15000 words
 
@@ -97,8 +112,11 @@ with open('/media/sf_G_DRIVE/nlp/Project/dataset/superuser/posListTop100.pk', 'w
 with open('/media/sf_G_DRIVE/nlp/Project/dataset/superuser/negListTop100.pk', 'wb') as output:
     pickle.dump(negList, output, protocol=0)
     
-with open('/media/sf_G_DRIVE/nlp/Project/dataset/superuser/testSetTop100.pk', 'wb') as output:
-    pickle.dump(testList, output, protocol=0)
+with open('/media/sf_G_DRIVE/nlp/Project/dataset/superuser/posTestTop100.pk', 'wb') as output:
+    pickle.dump(posTestList, output, protocol=0)
+    
+with open('/media/sf_G_DRIVE/nlp/Project/dataset/superuser/negTestTop100.pk', 'wb') as output:
+    pickle.dump(negTestList, output, protocol=0)
 
 
     

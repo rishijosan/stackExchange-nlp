@@ -37,7 +37,6 @@ with open('/media/sf_G_DRIVE/nlp/Project/dataset/superuser/tagsDesc.pk', 'rb') a
 
 testList = []
 
-testList.append(1,2,3,4,5)
 
 newSet = set()
 
@@ -56,6 +55,7 @@ newDict = dict()
 for i in range(20):
     newDict[i] = i
     
+   
     
-with open('/media/sf_G_DRIVE/nlp/Project/dataset/superuser/tags2Posts.pk', 'rb') as inp:
-    tags2Posts = pickle.load(inp)
+with open('/media/sf_G_DRIVE/nlp/Project/dataset/superuser/classifiersFin.pk', 'rb') as inp:
+    classifiers = pickle.load(inp)
