@@ -96,7 +96,7 @@ negTestList = []
 for i in range(numTags):
     negTrainSet = set(negList[i])
     
-    negTestSet = random.sample(postSet-negTrainSet-tagSetList[i], 1000)
+    negTestSet = random.sample(postSet-negTrainSet-tagSetList[i], 1000) # All posts - neg train set - posts corresponding to tag
     negTestList.append(negTestSet)
     
     

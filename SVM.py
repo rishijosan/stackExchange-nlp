@@ -228,7 +228,7 @@ def createClassifiers():
         results.append(resList)  
         print str(i) + " done!"
         
-    with open('/media/sf_G_DRIVE/nlp/Project/dataset/superuser/classifiers100.pk', 'wb') as output:
+    with open('/media/sf_G_DRIVE/nlp/Project/dataset/superuser/classifiersLat.pk', 'wb') as output:
         pickle.dump(results, output, protocol=0)
 
 
@@ -236,7 +236,7 @@ def createClassifiers():
 def appendNegTests():
     
     prepPostLists()
-    with open('/media/sf_G_DRIVE/nlp/Project/dataset/superuser/classifiers100.pk', 'rb') as inp:
+    with open('/media/sf_G_DRIVE/nlp/Project/dataset/superuser/classifiersLat.pk', 'rb') as inp:
         classifiers = pickle.load(inp)
      
      
@@ -255,11 +255,12 @@ def appendNegTests():
         print str(i) + " Done!"
         
     
-    with open('/media/sf_G_DRIVE/nlp/Project/dataset/superuser/classifiersFin.pk', 'wb') as output:
+    with open('/media/sf_G_DRIVE/nlp/Project/dataset/superuser/classifiersLat.pk', 'wb') as output:
         pickle.dump(classifiers, output, protocol=0)
         
 
 
+createClassifiers()
 appendNegTests()
 
 
