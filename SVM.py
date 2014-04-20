@@ -20,9 +20,9 @@ vectorizer = TfidfVectorizer()
 #countVec = CountVectorizer(stop_words='english')
 countVec = CountVectorizer()
 
+print 'In SVM'
 
-
-######################################### Load data files #################################################3   
+######################################### Load data files #################################################   
 with open('/media/sf_G_DRIVE/nlp/Project/dataset/superuser/idToPost.pk', 'rb') as inp:
     idToPost = pickle.load(inp)
 
@@ -260,8 +260,8 @@ def appendNegTests():
         
 
 
-createClassifiers()
-appendNegTests()
+#createClassifiers()
+#appendNegTests()
 
 
 #===============================================================================
