@@ -40,7 +40,7 @@ for i in range(numtags):
         sm_neg = 0
         
         result_pos = classifirs[i][1] # positive result
-        result_neg = classifirs[i][5] # neagtive result
+        result_neg = classifirs[i][5] # negative result
         
         acc_pos.append(classifirs[i][0]) # positive accuracy
         acc_neg.append(classifirs[i][4]) # negative accuracy

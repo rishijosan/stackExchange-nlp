@@ -11,7 +11,7 @@ from nltk.corpus import stopwords
 
 
    
-with open('/media/sf_G_DRIVE/nlp/Project/dataset/superuser/idToPost.pk', 'rb') as inp:
+with open('/media/sf_G_DRIVE/nlp/Project/dataset/superuser/idToPostSan.pk', 'rb') as inp:
     idToPost = pickle.load(inp)
     
 #===============================================================================
@@ -42,4 +42,26 @@ def sanitizePosts():
     with open('/media/sf_G_DRIVE/nlp/Project/dataset/superuser/idToPostSan.pk', 'wb') as output:
         pickle.dump(idToPost, output, protocol=0)
         
+#Remove punctuation
+def remPunct():
+    puncSet = set()
+    puncSet.add('.')
+    puncSet.add('!')
+    puncSet.add('?')
+    puncSet.add(',')
+    puncSet.add(';')
+    puncSet.add(':')
+    puncSet.add(',')
     
+    for key in idToPost.keys():
+        post = idToPost[key]
+        for word in post[1]:
+            if word in puncSet:
+                post[1].remove(word)
+        idToPost[key] = post
+        
+    with open('/media/sf_G_DRIVE/nlp/Project/dataset/superuser/idToPostSanPunct.pk', 'wb') as output:
+        pickle.dump(idToPost, output, protocol=0)
+    
+
+remPunct()

@@ -63,7 +63,7 @@ def createTrainSet():
         for post in item:
             trainSet.add(post)
 
-#Create testSet with posts which have maltiple topTags and are not included in any training set
+#Create testSet with posts which have multiple topTags and are not included in any training set
 def getTopTestPosts():
  
     for i in range(numTags):
