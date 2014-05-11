@@ -11,7 +11,11 @@ import cPickle as pickle
 #vectorizer = TfidfVectorizer(sublinear_tf=True, max_df=0.5,stop_words='english')
 import os
 
-  
+with open('/media/sf_G_DRIVE/nlp/Project/dataset/superuser/idToPost.pk', 'rb') as inp:
+    idToPost = pickle.load(inp)
+    
+with open('/media/sf_G_DRIVE/nlp/Project/dataset/superuser/idToPostSan.pk', 'rb') as inp:
+    idToPostSan = pickle.load(inp)
 
 
 #===============================================================================
