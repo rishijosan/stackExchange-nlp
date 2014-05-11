@@ -133,7 +133,7 @@ def countVectorizerSVM(trainList, labels, testList):
 
 
     
-#Own implementation of word frequency
+#Own implementation of word frequency; Also creating classifiers and predicting here: Split into methods
 def wordFrequencySVM(trainList, labels, testList):    
     trainWordList = list()
     
